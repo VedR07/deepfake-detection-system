@@ -2,27 +2,165 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Deepfake Detection System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DeepShield AI - Deepfake Detection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>AI Deepfake Detection</h1>
-    <p>Upload a video to analyze facial motion, audio-visual sync, and artifacts.</p>
 
-    <input type="file" id="file" accept="video/*" />
-    <button onclick="start()">Analyze Video</button>
+<div class="grain-overlay"></div>
+<div class="gradient-orb orb-1"></div>
+<div class="gradient-orb orb-2"></div>
 
-    <div id="status" class="status">Waiting for upload…</div>
+<div class="container">
+  
+  <header class="header">
+    <div class="logo-container">
+      <svg class="shield-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <path d="M16 2L4 8V14C4 21.732 9.373 28.778 16 30C22.627 28.778 28 21.732 28 14V8L16 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M12 16L14.5 18.5L20 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <h1 class="title">DeepShield AI</h1>
+    </div>
+    <p class="tagline">Neural authenticity verification powered by multi-modal forensic analysis</p>
+  </header>
 
-    <div class="progress-bar">
-      <div id="progress"></div>
+  <div class="upload-section">
+    <div class="upload-area" id="dropZone">
+      <div class="upload-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+        </svg>
+      </div>
+      <h3 class="upload-title">Drop video file here</h3>
+      <p class="upload-subtitle">or click to browse</p>
+      <div class="upload-formats">MP4, AVI, MOV, WEBM • Max 500MB</div>
+      <input type="file" id="file" accept="video/*" hidden />
     </div>
 
-    <h3>Results</h3>
-    <pre id="output"></pre>
+    <div class="file-preview hidden" id="filePreview">
+      <div class="file-info">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+        </svg>
+        <div class="file-details">
+          <div class="file-name" id="fileName">video.mp4</div>
+          <div class="file-size" id="fileSize">0 MB</div>
+        </div>
+        <button class="remove-file" id="removeFile">×</button>
+      </div>
+    </div>
+
+    <button class="analyze-btn" id="analyzeBtn" onclick="start()">
+      <span class="btn-text">Begin Analysis</span>
+      <svg class="btn-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="5" y1="12" x2="19" y2="12"/>
+        <polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </button>
   </div>
 
-  <script src="script.js"></script>
+  <div class="status-section" id="statusSection">
+    <div class="status-bar">
+      <div class="status-indicator">
+        <div class="pulse-dot"></div>
+        <span id="status">Awaiting upload</span>
+      </div>
+      <div class="progress-percent" id="progressPercent">0%</div>
+    </div>
+    <div class="progress-track">
+      <div id="progress" class="progress-fill"></div>
+    </div>
+  </div>
+
+  <div id="resultSection" class="results-section hidden">
+    
+    <div class="verdict-header">
+      <div class="verdict-badge" id="verdictBadge">
+        <div class="verdict-icon" id="verdictIcon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div class="verdict-content">
+          <div class="verdict-label">Analysis Result</div>
+          <h2 class="verdict-text" id="verdict">Authentic</h2>
+        </div>
+      </div>
+      
+      <div class="confidence-display">
+        <div class="confidence-label">
+          <span>Confidence Score</span>
+          <span class="confidence-value" id="confidenceValue">95%</span>
+        </div>
+        <div class="confidence-track">
+          <div id="confidenceBar" class="confidence-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-header">
+          <div class="metric-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <h4 class="metric-title">Temporal Coherence</h4>
+        </div>
+        <div class="metric-value" id="graphSignal">0.0000</div>
+        <div class="metric-description">Frame-to-frame consistency analysis</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-header">
+          <div class="metric-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </div>
+          <h4 class="metric-title">Frequency Artifacts</h4>
+        </div>
+        <div class="metric-value" id="freqSignal">0.0000</div>
+        <div class="metric-description">DCT compression signatures</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-header">
+          <div class="metric-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            </svg>
+          </div>
+          <h4 class="metric-title">Audio-Visual Sync</h4>
+        </div>
+        <div class="metric-value" id="avSignal">0.0000</div>
+        <div class="metric-description">Lip-sync alignment score</div>
+      </div>
+    </div>
+
+    <div class="timeline-section">
+      <div class="timeline-header">
+        <h3 class="timeline-title">Anomaly Timeline</h3>
+        <div class="timeline-count" id="anomalyCount">0 frames flagged</div>
+      </div>
+      <div class="timeline-container" id="timelineFrames">
+        <!-- Frames will be inserted here -->
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
