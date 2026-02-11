@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os, uuid, threading
-from backend import analyze_video
+from analyzer import analyze_video
 
 app = Flask(__name__)
 CORS(app)
