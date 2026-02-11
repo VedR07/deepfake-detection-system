@@ -28,7 +28,26 @@
     <p class="tagline">Neural authenticity verification powered by multi-modal forensic analysis</p>
   </header>
 
-  <div class="upload-section">
+  <!-- Mode Selector -->
+  <div class="mode-selector">
+    <button class="mode-btn active" id="videoModeBtn" onclick="switchMode('video')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+      </svg>
+      Video Upload
+    </button>
+    <button class="mode-btn" id="webcamModeBtn" onclick="switchMode('webcam')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+      Live Webcam
+    </button>
+  </div>
+
+  <!-- Video Upload Section -->
+  <div class="upload-section" id="videoSection">
     <div class="upload-area" id="dropZone">
       <div class="upload-icon">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -62,6 +81,80 @@
         <polyline points="12 5 19 12 12 19"/>
       </svg>
     </button>
+  </div>
+
+  <!-- Webcam Section -->
+  <div class="webcam-section hidden" id="webcamSection">
+    <div class="webcam-container">
+      <video id="webcamVideo" class="webcam-video" autoplay playsinline></video>
+      <canvas id="webcamCanvas" class="webcam-canvas"></canvas>
+      
+      <div class="webcam-overlay">
+        <div class="face-mesh-container" id="faceMeshContainer"></div>
+        <div class="live-verdict" id="liveVerdict">
+          <div class="live-verdict-icon" id="liveVerdictIcon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <div class="live-verdict-text" id="liveVerdictText">Authentic</div>
+          <div class="live-confidence" id="liveConfidence">95%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Real-time Temporal Graph -->
+    <div class="temporal-graph-container">
+      <div class="graph-header">
+        <h3 class="graph-title">Real-Time Temporal Analysis</h3>
+        <div class="graph-legend">
+          <div class="legend-item">
+            <span class="legend-color" style="background: #00ff88"></span>
+            <span>Eyes</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: #ff0080"></span>
+            <span>Mouth</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: #00d4ff"></span>
+            <span>Brows</span>
+          </div>
+        </div>
+      </div>
+      <canvas id="temporalGraph" class="temporal-graph"></canvas>
+      <div class="graph-metrics">
+        <div class="graph-metric">
+          <span class="metric-label">Coherence:</span>
+          <span class="metric-value" id="liveCoherence">0.0000</span>
+        </div>
+        <div class="graph-metric">
+          <span class="metric-label">Artifacts:</span>
+          <span class="metric-value" id="liveArtifacts">0.0000</span>
+        </div>
+        <div class="graph-metric">
+          <span class="metric-label">Risk Level:</span>
+          <span class="metric-value risk-badge" id="liveRisk">LOW</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="webcam-controls">
+      <button class="webcam-btn" id="startWebcamBtn" onclick="startWebcam()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <polygon points="10 8 16 12 10 16 10 8"/>
+        </svg>
+        Start Detection
+      </button>
+      <button class="webcam-btn stop-btn hidden" id="stopWebcamBtn" onclick="stopWebcam()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <rect x="9" y="9" width="6" height="6"/>
+        </svg>
+        Stop Detection
+      </button>
+    </div>
   </div>
 
   <div class="status-section" id="statusSection">
@@ -161,6 +254,8 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
 <script src="script.js"></script>
 </body>
 </html>
