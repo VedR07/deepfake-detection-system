@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Deepfake Detection System</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>AI Deepfake Detection</h1>
+    <p>Upload a video to analyze facial motion, audio-visual sync, and artifacts.</p>
+
+    <input type="file" id="file" accept="video/*" />
+    <button onclick="start()">Analyze Video</button>
+
+    <div id="status" class="status">Waiting for upload…</div>
+
+    <div class="progress-bar">
+      <div id="progress"></div>
+    </div>
+
+    <h3>Results</h3>
+    <pre id="output"></pre>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
