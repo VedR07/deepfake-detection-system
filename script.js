@@ -1,4 +1,4 @@
-const API = "http://localhost:5000/api";
+const API = "";
 let job = null;
 let currentFile = null;
 let currentMode = 'video';
